@@ -6,6 +6,7 @@ import com.haizhi.authcenter.config.SpringConfigMVC;
 
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.apache.logging.log4j.web.Log4jServletFilter;
+import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -135,7 +136,7 @@ public class JettyRunner {
         servletContext.addServlet(springMVCHolder,"/");
 
         //log4j2
-        servletContext.addEventListener(new Log4jServletContextListener());
+        //servletContext.addEventListener(new Log4jServletContextListener());
         EnumSet<DispatcherType> allDispatcherType = EnumSet.noneOf(DispatcherType.class);
         servletContext.addFilter(Log4jServletFilter.class.getName(),"/*",allDispatcherType);
         servletContext.addEventListener(new Log4jServletContextListener());
@@ -164,6 +165,7 @@ public class JettyRunner {
         securityHolder.setInitParameter("targetFilterLifecycle","true");
         servletContext.addFilter(securityHolder,"/*",
                 EnumSet.of(DispatcherType.REQUEST,DispatcherType.ASYNC));
+        //servletContext.addEventListener(new EnvironmentLoaderListener());
     }
 
 

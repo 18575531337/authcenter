@@ -12,7 +12,8 @@ import org.springframework.context.annotation.Import;
 @EnableAspectJAutoProxy
 @Configuration
 @Import({
-        SpringConfigMVC.class
+        SpringConfigMVC.class,
+        SecurityConfig.class
 })
 public class SpringConfig {
 }

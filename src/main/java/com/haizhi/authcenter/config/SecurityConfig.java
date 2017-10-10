@@ -1,6 +1,9 @@
 package com.haizhi.authcenter.config;
 
+import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.util.Factory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,10 +13,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SecurityConfig {
 
-    @Bean
+    @Bean("shiroFilter")
     public ShiroFilterFactoryBean getShiroFilterFactoryBean(){
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
-
+        Factory<SecurityManager> factory =
+                new IniSecurityManagerFactory("classpath:shiro.ini");
+        shiroFilterFactoryBean.setSecurityManager(factory.getInstance());
         return shiroFilterFactoryBean;
     }
 }
