@@ -3,8 +3,15 @@ package com.haizhi.authcenter.config;
 import com.alibaba.druid.filter.Filter;
 import com.alibaba.druid.filter.logging.Slf4jLogFilter;
 import com.alibaba.druid.pool.DruidDataSource;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -33,9 +40,11 @@ import java.util.List;
         SpringConfigMVC.class,
         SecurityConfig.class
 })
-public class SpringConfig implements EnvironmentAware {
+public class SpringConfig implements EnvironmentAware,ApplicationContextAware{
 
     private Environment env;
+
+    private ApplicationContext applicationContext;
 
     @Bean
     public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -105,8 +114,23 @@ public class SpringConfig implements EnvironmentAware {
         return txManager;
     }*/
 
+    @Bean
+    public MethodInvokingFactoryBean methodInvokingFactoryBean(){
+        MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
+        methodInvokingFactoryBean.setStaticMethod(
+                "org.apache.shiro.SecurityUtils.setSecurityManager");
+        methodInvokingFactoryBean.setArguments(
+                new Object[]{this.applicationContext.getBean(SecurityManager.class)});
+        return methodInvokingFactoryBean;
+    }
+
     @Override
     public void setEnvironment(Environment environment) {
         this.env = environment;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }
