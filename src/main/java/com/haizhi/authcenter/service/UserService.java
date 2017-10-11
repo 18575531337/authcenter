@@ -22,4 +22,6 @@ public interface UserService {
     User findByUsername(String username);// 根据用户名查找用户
     Set<String> findRoles(String username);// 根据用户名查找其角色
     Set<String> findPermissions(String username); //根据用户名查找其权限
+
+    User test();
 }

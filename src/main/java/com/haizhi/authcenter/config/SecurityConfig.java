@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SecurityConfig {
 
+    /*
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean getShiroFilterFactoryBean(){
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
@@ -21,4 +22,5 @@ public class SecurityConfig {
         shiroFilterFactoryBean.setSecurityManager(factory.getInstance());
         return shiroFilterFactoryBean;
     }
+    */
 }
