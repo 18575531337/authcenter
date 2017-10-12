@@ -3,6 +3,9 @@ package com.haizhi.authcenter.service.impl;
 import com.haizhi.authcenter.bean.User;
 import com.haizhi.authcenter.dao.mapper.UserDao;
 import com.haizhi.authcenter.service.UserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +27,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void login(User user) {
+        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(
+                user.getUsername(),user.getPassword());
+        usernamePasswordToken.setRememberMe(true);
 
+        Subject subject = SecurityUtils.getSubject();
+        subject.login(usernamePasswordToken);
     }
 
     @Override
@@ -34,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logout(User user) {
-
+        SecurityUtils.getSubject().logout();
     }
 
     @Override

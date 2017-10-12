@@ -101,8 +101,8 @@ public class JettyRunner {
 
     private static void initWebappContext(WebAppContext webAppContext){
         webAppContext.setContextPath("/");
-        webAppContext.setResourceBase("src/main/webapp");
-        webAppContext.setDescriptor("src/main/webapp/WEB-INF/web.xml");
+        webAppContext.setResourceBase("src/webapp");
+        webAppContext.setDescriptor("src/webapp/WEB-INF/web.xml");
 
         //webAppContext.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
         //webAppContext.setInitParameter("org.eclipse.jetty.servlet.Default.useFileMappedBuffer", "false");
@@ -159,14 +159,14 @@ public class JettyRunner {
 
         /**
          *  shiro-spring
-         */
+
         FilterHolder securityHolder = new FilterHolder(new DelegatingFilterProxy());
         securityHolder.setName("shiroFilter");
         securityHolder.setInitParameter("targetFilterLifecycle","true");
         servletContext.addFilter(securityHolder,"/*",
                 EnumSet.of(DispatcherType.REQUEST,DispatcherType.ASYNC));
         //servletContext.addEventListener(new EnvironmentLoaderListener());
-
+         */
     }
 
 

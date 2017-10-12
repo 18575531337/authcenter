@@ -21,7 +21,7 @@ public interface UserService {
     void uncorrelationRoles(User user);// 移除用户-角色关系
     User findByUsername(String username);// 根据用户名查找用户
     Set<String> findRoles(String username);// 根据用户名查找其角色
-    Set<String> findPermissions(String username); //根据用户名查找其权限
+    Set<String> findPermissions(String roleType); //根据用户名查找其权限
 
     User test();
 }

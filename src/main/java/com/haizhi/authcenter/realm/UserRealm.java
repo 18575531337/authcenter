@@ -13,6 +13,9 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by haizhi on 2017/10/9.
  */
@@ -24,16 +27,24 @@ public class UserRealm extends AuthorizingRealm {
 
     //授权
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        String username = (String)principals.getPrimaryPrincipal();
+        String username = principals.getPrimaryPrincipal().toString();
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        authorizationInfo.setRoles(userService.findRoles(username));
-        authorizationInfo.setStringPermissions(userService.findPermissions(username));
+        Set<String> roles = userService.findRoles(username);
+        authorizationInfo.setRoles(roles);
+
+        Set<String> permissions = new HashSet<>();
+        for(String roleType : roles){
+            permissions.addAll(this.userService.findPermissions(roleType));
+        }
+        authorizationInfo.setStringPermissions(permissions);
         return authorizationInfo;
     }
 
-    //登录
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        String username = (String)token.getPrincipal();
+    //认证
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
+            throws AuthenticationException {
+        String username = token.getPrincipal().toString();
+
         User user = userService.findByUsername(username);
         if(user == null) {
             throw new UnknownAccountException();//没找到帐号
@@ -44,8 +55,8 @@ public class UserRealm extends AuthorizingRealm {
 
         String password = token.getCredentials().toString();
 
-        userService.login(user,password);
-        /**/
+        checkPassword(password,user);
+
         //交给AuthenticatingRealm使用CredentialsMatcher进行密码匹配，如果觉得人家的不好可以在此判断或自定义实现
         AuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
                 user.getUsername(), //用户名
@@ -55,6 +66,10 @@ public class UserRealm extends AuthorizingRealm {
         );
 
         return authenticationInfo;
+    }
+
+    private void checkPassword(String password,User user) throws CredentialsException{
+        throw new CredentialsException();
     }
 
     public UserService getUserService() {
