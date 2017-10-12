@@ -1,12 +1,11 @@
 package com.haizhi.authcenter;
 
-import com.haizhi.authcenter.constants.Permit;
-import com.haizhi.authcenter.constants.Role;
+import com.haizhi.authcenter.constants.Permission;
+import com.haizhi.authcenter.constants.RoleType;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
@@ -54,9 +53,9 @@ public class TestStartup {
     public void testRole(){
         Subject user = login("admin", "123");
 
-        Assert.assertTrue(user.hasRole(Role.GUIDE));
+        Assert.assertTrue(user.hasRole(RoleType.GUIDE));
 
-        Assert.assertTrue(user.isPermitted(Permit.UPDATE));
+        Assert.assertTrue(user.isPermitted(Permission.UPDATE));
 
 
     }

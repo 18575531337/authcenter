@@ -3,11 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>haizhi</title>
+    <script type="text/javascript" src="js/jquery-3.2.1.js"></script>
 </head>
 <body>
     <h5>Welcome to haizhi !</h5>
-username:<input type="text" id="username"/>
-password:<input type="password" id="password"/>
+    <div>
+        <span>username:</span><input type="text" id="username"/>
+    </div>
+    <div>
+        <span>password:</span><input type="password" id="password"/>
+    </div>
 
+<div>
+    <input type="button" id="login" value="login"/>
+</div>
 </body>
-</html>
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+    $("#login").click(function () {
+
+        var data = {
+            username: $("#username").val(),
+            password: $("#password").val()
+        };
+
+        console.log(data);
+
+        $.ajax({
+            type: "POST",
+            url: "/api/login",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (resp) {
+                alert("success");
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    })
+});
+</script>

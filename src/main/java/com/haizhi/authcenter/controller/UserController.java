@@ -6,6 +6,7 @@ import com.haizhi.authcenter.response.RespData;
 import com.haizhi.authcenter.service.UserService;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +23,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/login" , method = RequestMethod.POST)
+    @RequestMapping(value = "/login" , method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public RespData login(@RequestBody User user){
         this.userService.login(user);
         return RespData.SUCCESS().setData("登陆成功");
