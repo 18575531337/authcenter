@@ -38,7 +38,7 @@ $(document).ready(function() {
             contentType: "application/json",
             data: JSON.stringify(data),
             success: function (resp) {
-                alert("success");
+                console.log(resp);
             },
             error: function () {
                 alert("error");

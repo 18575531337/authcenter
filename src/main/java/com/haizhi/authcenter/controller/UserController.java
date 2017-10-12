@@ -27,7 +27,7 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public RespData login(@RequestBody User user){
-        this.userService.login(user);
+        //this.userService.login(user);
         return RespData.SUCCESS().setData("登陆成功");
     }
 
