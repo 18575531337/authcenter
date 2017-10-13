@@ -1,6 +1,7 @@
 package com.haizhi.authcenter.controller;
 
 import com.haizhi.authcenter.bean.User;
+import com.haizhi.authcenter.constants.RoleType;
 import com.haizhi.authcenter.response.RespData;
 
 import com.haizhi.authcenter.service.UserService;
@@ -31,7 +32,7 @@ public class UserController {
         return RespData.SUCCESS().setData("登陆成功");
     }
 
-    @RequiresRoles("admin")
+    @RequiresRoles(RoleType.ADMIN)
     @RequestMapping("/getToken")
     public RespData getToken(){
         return RespData.SUCCESS().setData("你好");

@@ -1,6 +1,7 @@
 package com.haizhi.authcenter.service.impl;
 
 import com.haizhi.authcenter.bean.User;
+import com.haizhi.authcenter.constants.Permission;
 import com.haizhi.authcenter.dao.mapper.UserDao;
 import com.haizhi.authcenter.service.UserService;
 import org.apache.shiro.SecurityUtils;
@@ -19,6 +20,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
+
+    //private PermissionDao permissionDao;
 
     @Override
     public String getName() {

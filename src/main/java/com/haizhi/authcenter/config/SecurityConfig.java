@@ -1,15 +1,13 @@
 package com.haizhi.authcenter.config;
 
-import com.haizhi.authcenter.realm.UserRealm;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.DefaultSecurityManager;
+import com.haizhi.authcenter.security.PwdRetryCredentialMatcher;
+import com.haizhi.authcenter.security.UserRealm;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.util.Factory;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.BeansException;
@@ -42,10 +40,14 @@ public class SecurityConfig implements ApplicationContextAware{
     }
 
     @Bean("securityManager")
-    @DependsOn("userRealm")
+    @DependsOn({"userRealm","pwdRetryCredentialMatcher"})
     public SecurityManager securityManager(){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(this.applicationContext.getBean(UserRealm.class));
+
+        UserRealm userRealm = this.applicationContext.getBean(UserRealm.class);
+        userRealm.setCredentialsMatcher(this.applicationContext.getBean(PwdRetryCredentialMatcher.class));
+
+        securityManager.setRealm(userRealm);
         return securityManager;
     }
 
@@ -72,6 +74,13 @@ public class SecurityConfig implements ApplicationContextAware{
     @Bean
     public DefaultSessionManager sessionManager(){
         DefaultSessionManager sessionManager = new DefaultSessionManager();
+        //会话超时时间，单位：毫秒  300
+        sessionManager.setGlobalSessionTimeout(1800000);
+
+        //启用定时器 and 定时清理失效会话, 清理用户直接关闭浏览器造成的孤立会话
+        sessionManager.setSessionValidationSchedulerEnabled(true);
+        sessionManager.setSessionValidationInterval(120000);
+
         return sessionManager;
     }
 
