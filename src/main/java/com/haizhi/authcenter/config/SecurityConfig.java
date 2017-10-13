@@ -10,6 +10,7 @@ import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.util.Factory;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -36,13 +37,14 @@ public class SecurityConfig implements ApplicationContextAware{
         shiroFilterFactoryBean.setSecurityManager(factory.getInstance());
         */
         shiroFilterFactoryBean.setSecurityManager(securityManager());
+        shiroFilterFactoryBean.setLoginUrl("/login");
         return shiroFilterFactoryBean;
     }
 
     @Bean("securityManager")
     @DependsOn("userRealm")
     public SecurityManager securityManager(){
-        DefaultSecurityManager securityManager = new DefaultSecurityManager();
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(this.applicationContext.getBean(UserRealm.class));
         return securityManager;
     }

@@ -159,14 +159,14 @@ public class JettyRunner {
 
         /**
          *  shiro-spring
-
+         */
         FilterHolder securityHolder = new FilterHolder(new DelegatingFilterProxy());
         securityHolder.setName("shiroFilter");
         securityHolder.setInitParameter("targetFilterLifecycle","true");
         servletContext.addFilter(securityHolder,"/*",
                 EnumSet.of(DispatcherType.REQUEST,DispatcherType.ASYNC));
         //servletContext.addEventListener(new EnvironmentLoaderListener());
-         */
+
     }
 
 
