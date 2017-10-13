@@ -1,6 +1,6 @@
 package com.haizhi.authcenter.config;
 
-import com.haizhi.authcenter.security.PwdRetryCredentialMatcher;
+import com.haizhi.authcenter.security.UserCredentialMatcher;
 import com.haizhi.authcenter.security.UserRealm;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
@@ -45,7 +45,7 @@ public class SecurityConfig implements ApplicationContextAware{
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 
         UserRealm userRealm = this.applicationContext.getBean(UserRealm.class);
-        userRealm.setCredentialsMatcher(this.applicationContext.getBean(PwdRetryCredentialMatcher.class));
+        userRealm.setCredentialsMatcher(this.applicationContext.getBean(UserCredentialMatcher.class));
 
         securityManager.setRealm(userRealm);
         return securityManager;

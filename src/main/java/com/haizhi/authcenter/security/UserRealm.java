@@ -54,7 +54,7 @@ public class UserRealm extends AuthorizingRealm {
 
         String password = token.getCredentials().toString();
 
-        checkPassword(password,user);
+        //checkPassword(password,user);
 
         //交给AuthenticatingRealm使用CredentialsMatcher进行密码匹配，如果觉得人家的不好可以在此判断或自定义实现
         AuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
@@ -67,9 +67,10 @@ public class UserRealm extends AuthorizingRealm {
         return authenticationInfo;
     }
 
+    /*
     private void checkPassword(String password,User user) throws CredentialsException{
         throw new CredentialsException();
-    }
+    }*/
 
     public UserService getUserService() {
         return userService;

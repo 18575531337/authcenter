@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * 可以锁定如1天，以此类推，防止密码被暴力破解。
  */
 @Component
-public class PwdRetryCredentialMatcher extends HashedCredentialsMatcher {
+public class UserCredentialMatcher extends HashedCredentialsMatcher {
 
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
