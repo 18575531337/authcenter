@@ -40,7 +40,7 @@ public class SecurityConfig implements ApplicationContextAware{
     }
 
     @Bean("securityManager")
-    @DependsOn({"userRealm","pwdRetryCredentialMatcher"})
+    @DependsOn({"userRealm","userCredentialMatcher"})
     public SecurityManager securityManager(){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 

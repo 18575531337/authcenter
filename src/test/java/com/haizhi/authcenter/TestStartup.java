@@ -1,7 +1,9 @@
 package com.haizhi.authcenter;
 
+import com.haizhi.authcenter.config.SpringConfig;
 import com.haizhi.authcenter.constants.Permission;
 import com.haizhi.authcenter.constants.RoleType;
+import com.haizhi.authcenter.util.Utils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -18,6 +20,9 @@ import org.apache.shiro.util.Factory;
 import org.apache.shiro.util.SimpleByteSource;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.security.Key;
 
@@ -25,11 +30,15 @@ import java.security.Key;
 /**
  * Created by haizhi on 2017/10/9.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {
+        SpringConfig.class
+})
 public class TestStartup {
 
     @Test
     public void testLogin(){
-        Subject subject = login("admin", "123");
+        Subject subject = login("aaa", "a24736008fd69b0e33558ab24717b348421e9a6a304e8071b733f8c56709159b");
 
         Assert.assertTrue(subject.isAuthenticated()); //断言用户已经登录
 
@@ -84,8 +93,8 @@ public class TestStartup {
 
     @Test
     public void testHash(){
-        String str = "hello";
-        String salt = "123";
+        String str = "bbb";
+        String salt = "123456";
         String md5Str = new Md5Hash(str, salt).toString();//还可以转换为 toBase64()/toHex()
 
         String sha1 = new Sha1Hash(str, salt).toString();
@@ -108,7 +117,11 @@ public class TestStartup {
         hashService.setHashAlgorithmName("SHA-512");
         hashService.setPrivateSalt(new SimpleByteSource("123")); //私盐，默认无
         hashService.setGeneratePublicSalt(true);//是否生成公盐，默认false
-        hashService.setRandomNumberGenerator(new SecureRandomNumberGenerator());//用于生成公盐。默认就这个
+        SecureRandomNumberGenerator salt = new SecureRandomNumberGenerator();
+
+        System.out.println("salt : "+salt.getSecureRandom().getAlgorithm());
+
+        hashService.setRandomNumberGenerator(salt);//用于生成公盐。默认就这个
         hashService.setHashIterations(1); //生成Hash值的迭代次数
 
         HashRequest request = new HashRequest.Builder()
@@ -125,12 +138,37 @@ public class TestStartup {
         aesCipherService.setKeySize(128); //设置key长度
         //生成key
         Key key = aesCipherService.generateNewKey();
-        String text = "hello";
+
+        String text = "bbb";
+
+
         //加密
         String encrptText = aesCipherService.encrypt(text.getBytes(), key.getEncoded()).toHex();
+
         //解密
         String text2 = new String(aesCipherService.decrypt(Hex.decode(encrptText), key.getEncoded()).getBytes());
 
         Assert.assertEquals(text, text2);
+
+        System.out.println("key : "+ Utils.bytesToHexString(key.getEncoded()));
+        System.out.println("密文 : "+encrptText);
+        System.out.println("明文 : "+text2);
     }
+
+    @Test
+    public void testPwd(){
+        AesCipherService aesCipherService = new AesCipherService();
+        aesCipherService.setKeySize(128); //设置key长度
+
+        String text = "bbb";
+
+
+        //加密
+        String encrptText = aesCipherService.encrypt(text.getBytes(),
+                Utils.hexStringToBytes("d4db29c8f5382205ddb3c0d0d791ccef")).toHex();
+
+        System.out.println("密文 : "+encrptText);
+    }
+
+
 }

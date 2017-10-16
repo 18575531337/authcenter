@@ -1,9 +1,14 @@
 package com.haizhi.authcenter.security;
 
+import com.haizhi.authcenter.constants.Key;
+import com.haizhi.authcenter.util.Utils;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.codec.Hex;
+import org.apache.shiro.crypto.AesCipherService;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,6 +22,16 @@ public class UserCredentialMatcher extends HashedCredentialsMatcher {
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         String username = (String)token.getPrincipal();
+
+        String cipherPassword = token.getCredentials().toString();
+
+        AesCipherService aesCipherService = new AesCipherService();
+        aesCipherService.setKeySize(128); //设置key长度
+        String password = new String(aesCipherService.decrypt(Hex.decode(cipherPassword),
+                Utils.hexStringToBytes(Key.AES)).getBytes());
+
+        String pwdHashStr = new SimpleHash("SHA-512", password, Key.SALT).toString();
+
         //retry count + 1
         /*
         Element element = passwordRetryCache.get(username);
@@ -30,11 +45,11 @@ public class UserCredentialMatcher extends HashedCredentialsMatcher {
             throw new ExcessiveAttemptsException();
         }
 */
-        boolean matches = super.doCredentialsMatch(token, info);
-        if(matches) {
-            //clear retry count
-            //passwordRetryCache.remove(username);
+
+        //boolean isMatch = super.doCredentialsMatch(token, info);
+        if(info.getCredentials().equals(pwdHashStr)) {
+            return true;
         }
-        return matches;
+        return false;
     }
 }
