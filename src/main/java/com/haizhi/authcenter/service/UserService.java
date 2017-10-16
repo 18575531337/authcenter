@@ -1,6 +1,6 @@
 package com.haizhi.authcenter.service;
 
-import com.haizhi.authcenter.bean.User;
+import com.haizhi.authcenter.entity.User;
 
 import java.util.Set;
 

@@ -1,11 +1,10 @@
 package com.haizhi.authcenter.controller;
 
-import com.haizhi.authcenter.bean.User;
+import com.haizhi.authcenter.entity.User;
 import com.haizhi.authcenter.constants.RoleType;
-import com.haizhi.authcenter.response.RespData;
+import com.haizhi.authcenter.entity.response.RespData;
 
 import com.haizhi.authcenter.service.UserService;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.lang.invoke.MethodType;
 
 /**
  * Created by haizhi on 2017/9/2.

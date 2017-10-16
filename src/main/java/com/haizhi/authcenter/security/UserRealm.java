@@ -1,22 +1,17 @@
 package com.haizhi.authcenter.security;
 
-import com.haizhi.authcenter.bean.User;
-import com.haizhi.authcenter.constants.Key;
+import com.haizhi.authcenter.entity.User;
 import com.haizhi.authcenter.constants.UserStatus;
 import com.haizhi.authcenter.service.UserService;
-import com.haizhi.authcenter.util.Utils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.codec.Hex;
-import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**

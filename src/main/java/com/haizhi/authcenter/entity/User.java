@@ -1,4 +1,4 @@
-package com.haizhi.authcenter.bean;
+package com.haizhi.authcenter.entity;
 
 import java.util.Set;
 

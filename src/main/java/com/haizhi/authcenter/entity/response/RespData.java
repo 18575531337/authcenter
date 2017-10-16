@@ -1,4 +1,4 @@
-package com.haizhi.authcenter.response;
+package com.haizhi.authcenter.entity.response;
 
 /**
  * Created by JuniFire on 2017/9/6.

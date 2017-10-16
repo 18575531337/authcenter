@@ -1,6 +1,6 @@
 package com.haizhi.authcenter.dao.mapper;
 
-import com.haizhi.authcenter.bean.User;
+import com.haizhi.authcenter.entity.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
