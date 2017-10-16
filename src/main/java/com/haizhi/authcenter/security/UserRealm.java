@@ -35,10 +35,8 @@ public class UserRealm extends AuthorizingRealm {
         Set<String> roles = userService.findRoles(username);
         authorizationInfo.setRoles(roles);
 
-        Set<String> permissions = new HashSet<>();
-        for(String roleType : roles){
-            permissions.addAll(this.userService.findPermissions(roleType));
-        }
+        Set<String> permissions = this.userService.findPermissions(roles);
+
         authorizationInfo.setStringPermissions(permissions);
         return authorizationInfo;
     }
@@ -49,23 +47,19 @@ public class UserRealm extends AuthorizingRealm {
         String username = token.getPrincipal().toString();
 
 
-        //User user = userService.findByUsername(username);
-        //for test
+        User user = userService.findUser(username);
+        /*for test
         User user = new User();
         user.setUsername("aaa");
         user.setPassword("793c5d791a2f74aaf6214aabcdfc11859d7fbf55313b675e215796fb4418502dc9523f5a5e06c3d94942fc71285a854e7910b3eafd470f5f1e3de8aafb5468b5");
         user.setSalt(Key.SALT);
-
+*/
         if(user == null) {
             throw new UnknownAccountException();//没找到帐号
         }
         if(UserStatus.LOCKED.equals(user.getUserStatus())) {
             throw new LockedAccountException(); //帐号锁定
         }
-
-        //String password = token.getCredentials().toString();
-
-        //checkPassword(password,user);
 
         //交给AuthenticatingRealm使用CredentialsMatcher进行密码匹配，如果觉得人家的不好可以在此判断或自定义实现
         AuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
@@ -76,15 +70,6 @@ public class UserRealm extends AuthorizingRealm {
         );
 
         return authenticationInfo;
-    }
-
-    /*
-    private void checkPassword(String password,User user) throws CredentialsException{
-        throw new CredentialsException();
-    }*/
-
-    public UserService getUserService() {
-        return userService;
     }
 
     public void setUserService(UserService userService) {

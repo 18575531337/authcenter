@@ -29,11 +29,11 @@ import java.security.Key;
 
 /**
  * Created by haizhi on 2017/10/9.
- */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {
         SpringConfig.class
-})
+}) */
 public class TestStartup {
 
     @Test
@@ -162,12 +162,12 @@ public class TestStartup {
 
         String text = "bbb";
 
-
         //加密
         String encrptText = aesCipherService.encrypt(text.getBytes(),
-                Utils.hexStringToBytes("d4db29c8f5382205ddb3c0d0d791ccef")).toHex();
+                Utils.hexStringToBytes(com.haizhi.authcenter.constants.Key.AES)).toHex();
 
         System.out.println("密文 : "+encrptText);
+        //a720e01a52babc386cc588766cd914c953d1804a010610acef4af82e9096cece
     }
 
 

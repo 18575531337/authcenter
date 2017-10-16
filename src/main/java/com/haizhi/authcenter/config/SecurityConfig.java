@@ -7,6 +7,7 @@ import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
@@ -34,14 +35,14 @@ public class SecurityConfig implements ApplicationContextAware{
                 new IniSecurityManagerFactory("classpath:shiro.ini");
         shiroFilterFactoryBean.setSecurityManager(factory.getInstance());
         */
-        shiroFilterFactoryBean.setSecurityManager(securityManager());
+        shiroFilterFactoryBean.setSecurityManager(getSecurityManager());
         shiroFilterFactoryBean.setLoginUrl("/login");
         return shiroFilterFactoryBean;
     }
 
     @Bean("securityManager")
     @DependsOn({"userRealm","userCredentialMatcher"})
-    public SecurityManager securityManager(){
+    public SecurityManager getSecurityManager(){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 
         UserRealm userRealm = this.applicationContext.getBean(UserRealm.class);
@@ -50,6 +51,18 @@ public class SecurityConfig implements ApplicationContextAware{
         securityManager.setRealm(userRealm);
         return securityManager;
     }
+
+    /**
+     * 鉴权拦截器
+     * @return
+     */
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(){
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(getSecurityManager());
+        return advisor;
+    }
+
 
     //session生命周期管理器
     @Bean

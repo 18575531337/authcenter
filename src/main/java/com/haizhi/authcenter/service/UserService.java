@@ -19,9 +19,10 @@ public interface UserService {
     void changePassword(User user);//修改密码
     void correlationRoles(User user); //添加用户-角色关系
     void uncorrelationRoles(User user);// 移除用户-角色关系
-    User findByUsername(String username);// 根据用户名查找用户
+
+    User findUser(String username);// 根据用户名查找用户
     Set<String> findRoles(String username);// 根据用户名查找其角色
-    Set<String> findPermissions(String roleType); //根据用户名查找其权限
+    Set<String> findPermissions(Set<String> roleType); //根据用户名查找其权限
 
     User test();
 }

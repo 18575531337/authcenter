@@ -22,8 +22,7 @@ public class UserCredentialMatcher extends HashedCredentialsMatcher {
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         String username = (String)token.getPrincipal();
-
-        String cipherPassword = token.getCredentials().toString();
+        String cipherPassword = String.copyValueOf((char[])token.getCredentials());
 
         AesCipherService aesCipherService = new AesCipherService();
         aesCipherService.setKeySize(128); //设置key长度

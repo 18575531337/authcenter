@@ -7,8 +7,9 @@ import com.haizhi.authcenter.web.JettyRunner;
  */
 public class Startup {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         JettyRunner.run();
+
     }
 }

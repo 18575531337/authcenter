@@ -11,4 +11,25 @@
         from
         user;
     </select>
+
+    <select id="getUser" resultType="java.util.Map">
+        select
+        username,
+        password,
+        salt,
+        role
+        from
+          user
+        where
+         username = #{username}
+    </select>
+
+    <select id="getRoleStr" resultType="string">
+        select
+          role
+        from
+          user
+        where
+         username = #{username}
+    </select>
 </mapper>

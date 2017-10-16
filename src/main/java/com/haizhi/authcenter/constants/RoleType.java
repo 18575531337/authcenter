@@ -8,5 +8,6 @@ public interface RoleType {
     String ADMIN = "ADMIN";
     String USER = "USER";
     String GUIDE = "GUIDE";
+    String VIP = "VIP";
 
 }

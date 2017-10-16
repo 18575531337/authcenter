@@ -2,6 +2,7 @@ package com.haizhi.authcenter.service.impl;
 
 import com.haizhi.authcenter.bean.User;
 import com.haizhi.authcenter.constants.Permission;
+import com.haizhi.authcenter.dao.mapper.PermissionDao;
 import com.haizhi.authcenter.dao.mapper.UserDao;
 import com.haizhi.authcenter.service.UserService;
 import org.apache.shiro.SecurityUtils;
@@ -10,6 +11,8 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,7 +24,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
 
-    //private PermissionDao permissionDao;
+    @Autowired
+    private PermissionDao permissionDao;
 
     @Override
     public String getName() {
@@ -69,18 +73,40 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return null;
+    public User findUser(String username) {
+        Map<String,String> map = userDao.getUser(username);
+        User user = new User();
+        user.setUsername(map.get("username"));
+        user.setPassword(map.get("password"));
+        user.setSalt(map.get("salt"));
+        Set<String> roles = new HashSet<>();
+        for(String role : map.get("role").split(",")){
+            roles.add(role);
+        }
+        user.setRoles(roles);
+
+        return user;
     }
 
     @Override
     public Set<String> findRoles(String username) {
-        return null;
+        String roleStr = this.userDao.getRoleStr(username);
+        Set<String> roles = new HashSet<>();
+        for(String role : roleStr.split(",")){
+            roles.add(role);
+        }
+        return roles;
     }
 
     @Override
-    public Set<String> findPermissions(String username) {
-        return null;
+    public Set<String> findPermissions(Set<String> roles) {
+        Set<String> permissions = new HashSet<>();
+        for(String role : roles){
+            for(String permission : this.permissionDao.getPermissionStr(role).split(",")){
+                permissions.add(permission);
+            }
+        }
+        return permissions;
     }
 
     @Override
@@ -90,5 +116,9 @@ public class UserServiceImpl implements UserService {
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
+    }
+
+    public void setPermissionDao(PermissionDao permissionDao) {
+        this.permissionDao = permissionDao;
     }
 }

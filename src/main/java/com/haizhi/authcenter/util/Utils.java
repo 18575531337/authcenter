@@ -1,5 +1,7 @@
 package com.haizhi.authcenter.util;
 
+import com.auth0.jwt.JWTCreator;
+
 /**
  * Created by haizhi on 2017/10/16.
  */
@@ -46,6 +48,11 @@ public class Utils {
      */
     private static byte charToByte(char c) {
         return (byte) "0123456789ABCDEF".indexOf(c);
+    }
+
+    public static String generateToken(String userID) {
+        return ""
+;
     }
 
 }
