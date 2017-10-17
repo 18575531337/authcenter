@@ -25,6 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.security.Key;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -170,5 +171,23 @@ public class TestStartup {
         //a720e01a52babc386cc588766cd914c953d1804a010610acef4af82e9096cece
     }
 
+    @Test
+    public void testToken() {
+        String token = Utils.generateToken(2L);
+        System.out.println(token);
 
+        try {
+            TimeUnit.SECONDS.sleep(4);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //System.out.println(Utils.getUserID(token));
+        try {
+            Utils.validateToken(token);
+        } catch (Exception e) {
+            System.err.println("token 过期");
+        }
+
+    }
 }

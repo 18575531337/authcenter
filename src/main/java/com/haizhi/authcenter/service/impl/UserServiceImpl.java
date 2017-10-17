@@ -73,17 +73,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUser(String username) {
-        Map<String,String> map = userDao.getUser(username);
+        Map<String,Object> map = userDao.getUser(username);
         User user = new User();
-        user.setUsername(map.get("username"));
-        user.setPassword(map.get("password"));
-        user.setSalt(map.get("salt"));
+        user.setUsername(map.get("username").toString());
+        user.setPassword(map.get("password").toString());
+        user.setSalt(map.get("salt").toString());
         Set<String> roles = new HashSet<>();
-        for(String role : map.get("role").split(",")){
+        for(String role : map.get("role").toString().split(",")){
             roles.add(role);
         }
         user.setRoles(roles);
-
+        user.setId(Long.valueOf(map.get("id").toString()));
         return user;
     }
 

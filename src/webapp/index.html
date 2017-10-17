@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <title>haizhi</title>
     <script type="text/javascript" src="js/jquery-3.2.1.js"></script>
+
+    <style>
+        .resp{
+            border-style: solid;
+            border-color: coral;
+            border-radius: 5pt;
+            width: 400pt;
+            height: 150pt;
+        }
+    </style>
 </head>
 <body>
     <h5>Welcome to haizhi !</h5>
@@ -17,10 +27,19 @@
 <div>
     <input type="button" id="login" value="login"/>
 </div>
+
+<div>
+    reponse :
+</div>
+<div id="result" class="resp">
+</div>
 </body>
 
 <script type="text/javascript">
 $(document).ready(function() {
+
+    $("#username").val("aaa");
+    $("#password").val("a720e01a52babc386cc588766cd914c953d1804a010610acef4af82e9096cece");
 
     $("#login").click(function () {
 
@@ -39,6 +58,7 @@ $(document).ready(function() {
             data: JSON.stringify(data),
             success: function (resp) {
                 console.log(resp);
+                $("#result").html(JSON.stringify(resp));
             },
             error: function () {
                 alert("error");

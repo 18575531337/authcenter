@@ -22,7 +22,7 @@ import org.springframework.context.annotation.DependsOn;
  * Created by haizhi on 2017/10/9.
  */
 @Configuration
-public class SecurityConfig implements ApplicationContextAware{
+public class SpringConfigSecurity implements ApplicationContextAware{
 
     private ApplicationContext applicationContext;
 

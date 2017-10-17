@@ -1,6 +1,14 @@
 package com.haizhi.authcenter.util;
 
+import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.Verification;
+import com.haizhi.authcenter.constants.Key;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by haizhi on 2017/10/16.
@@ -50,9 +58,40 @@ public class Utils {
         return (byte) "0123456789ABCDEF".indexOf(c);
     }
 
-    public static String generateToken(String userID) {
-        return ""
-;
+    private static Algorithm getTokenAlgorithm() {
+        Algorithm algorithm = null;
+        try {
+            algorithm = Algorithm.HMAC256(Key.TOKEN);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return algorithm;
+    }
+
+    public static String generateToken(Long userID) {
+
+        Calendar expireDate = Calendar.getInstance();
+        //半天后过期
+        expireDate.set(Calendar.HOUR,expireDate.get(Calendar.HOUR)+12);
+        /**
+         * for test
+        expireDate.set(Calendar.SECOND,expireDate.get(Calendar.SECOND)+3);
+         */
+        String token = JWT.create()
+                .withExpiresAt(expireDate.getTime())
+                .withClaim("userID",userID)
+                .sign(getTokenAlgorithm());
+        return token;
+    }
+
+    public static void validateToken(String token) {
+        Verification verification = JWT.require(getTokenAlgorithm());
+        verification.build().verify(token);
+    }
+
+    public static Long getUserID(String token) {
+        DecodedJWT decodedJWT = JWT.decode(token);
+        return decodedJWT.getClaim("userID").as(Long.TYPE);
     }
 
 }

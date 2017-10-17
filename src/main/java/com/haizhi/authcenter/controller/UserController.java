@@ -5,6 +5,7 @@ import com.haizhi.authcenter.constants.RoleType;
 import com.haizhi.authcenter.entity.response.RespData;
 
 import com.haizhi.authcenter.service.UserService;
+import com.haizhi.authcenter.util.Utils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by haizhi on 2017/9/2.
@@ -33,7 +37,11 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public RespData login(@RequestBody User user){
         this.userService.login(user);
-        return RespData.SUCCESS().setData("登陆成功");
+
+        Map<String,String> resp = new HashMap<>();
+        resp.put("token", Utils.generateToken(
+                Long.valueOf(this.userService.findUser(user.getUsername()).getId())));
+        return RespData.SUCCESS().setData(resp);
     }
 
     //@RequiresPermissions("CCC")
