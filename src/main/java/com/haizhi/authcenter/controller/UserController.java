@@ -1,5 +1,6 @@
 package com.haizhi.authcenter.controller;
 
+import com.haizhi.authcenter.cache.Cache;
 import com.haizhi.authcenter.entity.User;
 import com.haizhi.authcenter.constants.RoleType;
 import com.haizhi.authcenter.entity.response.RespData;
@@ -8,13 +9,21 @@ import com.haizhi.authcenter.service.UserService;
 import com.haizhi.authcenter.util.Utils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.types.RedisClientInfo;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +31,15 @@ import java.util.Map;
  */
 @RestController
 public class UserController {
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Resource(name = "tokenCache")
+    private ValueOperations<String,String> tokenCache;
+
+    @Resource(name = "cacheToken")
+    private Cache<String,String> cacheToken;
 
     @Autowired
     private UserService userService;
@@ -37,10 +55,13 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public RespData login(@RequestBody User user){
         this.userService.login(user);
+        Long id = this.userService.findUser(user.getUsername()).getId();
+        String token = Utils.generateToken(Long.valueOf(id));
 
         Map<String,String> resp = new HashMap<>();
-        resp.put("token", Utils.generateToken(
-                Long.valueOf(this.userService.findUser(user.getUsername()).getId())));
+        resp.put("token", token);
+
+        cacheToken.set("user_session_"+id,token);
         return RespData.SUCCESS().setData(resp);
     }
 
@@ -58,5 +79,13 @@ public class UserController {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setRedisTemplate(RedisTemplate<String, String> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+    public void setTokenCache(ValueOperations<String,String> tokenCache) {
+        this.tokenCache = tokenCache;
     }
 }

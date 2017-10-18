@@ -34,7 +34,8 @@ import java.util.List;
 })
 @Import({
         SpringConfigMVC.class,
-        SpringConfigSecurity.class
+        SpringConfigSecurity.class,
+        SpringConfigRedis.class
 })
 public class SpringConfig implements EnvironmentAware,ApplicationContextAware{
 

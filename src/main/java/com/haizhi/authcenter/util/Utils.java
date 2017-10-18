@@ -94,4 +94,9 @@ public class Utils {
         return decodedJWT.getClaim("userID").as(Long.TYPE);
     }
 
+    public static Calendar getExpireDate(int value,int calendarType){
+        Calendar expireDate = Calendar.getInstance();
+        expireDate.set(calendarType,expireDate.get(calendarType)+value);
+        return expireDate;
+    }
 }

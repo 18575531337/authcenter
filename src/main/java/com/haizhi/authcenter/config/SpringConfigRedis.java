@@ -16,10 +16,10 @@ import redis.clients.jedis.JedisPoolConfig;
 @Configuration
 public class SpringConfigRedis {
 
-    @Value("redis.host")
+    @Value("${redis.host}")
     private String host;
 
-    @Value("redis.port")
+    @Value("${redis.port}")
     private int port;
 
     @Bean
@@ -28,7 +28,7 @@ public class SpringConfigRedis {
 
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxIdle(60000);
-        jedisPoolConfig.setMaxWaitMillis(5000);
+        jedisPoolConfig.setMaxWaitMillis(2000);
         jedisPoolConfig.setTestOnBorrow(true);
 
         redisConneFactory.setPoolConfig(jedisPoolConfig);
@@ -39,10 +39,13 @@ public class SpringConfigRedis {
         return redisConneFactory;
     }
 
-    @Bean
+    @Bean("tokenCache")
     public RedisTemplate<String, String> getRedisTemplate() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(getRedisConnFactory());
+        //redisTemplate.setEnableTransactionSupport(false);
+        //redisTemplate.setExposeConnection(false);
+
         return redisTemplate;
     }
 
