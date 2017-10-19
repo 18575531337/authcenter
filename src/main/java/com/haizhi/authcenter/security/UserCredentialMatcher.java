@@ -5,6 +5,7 @@ import com.haizhi.authcenter.util.Utils;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
@@ -17,11 +18,11 @@ import org.springframework.stereotype.Component;
  * 可以锁定如1天，以此类推，防止密码被暴力破解。
  */
 @Component
-public class UserCredentialMatcher extends HashedCredentialsMatcher {
+public class UserCredentialMatcher implements CredentialsMatcher {
 
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
-        String username = (String)token.getPrincipal();
+        //String username = (String)token.getPrincipal();
         String cipherPassword = String.copyValueOf((char[])token.getCredentials());
 
         AesCipherService aesCipherService = new AesCipherService();
@@ -45,7 +46,6 @@ public class UserCredentialMatcher extends HashedCredentialsMatcher {
         }
 */
 
-        //boolean isMatch = super.doCredentialsMatch(token, info);
         if(info.getCredentials().equals(pwdHashStr)) {
             return true;
         }
