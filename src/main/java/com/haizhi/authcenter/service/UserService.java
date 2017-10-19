@@ -13,6 +13,7 @@ public interface UserService {
 
     void login(User user);
     void login(User user,String password);
+    void logout();
     void logout(User user);
 
     User createUser(User user); //创建账户

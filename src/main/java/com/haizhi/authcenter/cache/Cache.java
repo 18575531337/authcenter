@@ -9,4 +9,8 @@ public interface Cache<K,V> {
 
     V get(K key);
 
+    void del(K key);
+
+    void del(K key,CallBackListener callBackListener);
+
 }

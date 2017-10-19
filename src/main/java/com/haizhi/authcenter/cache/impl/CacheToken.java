@@ -1,6 +1,7 @@
 package com.haizhi.authcenter.cache.impl;
 
 import com.haizhi.authcenter.cache.Cache;
+import com.haizhi.authcenter.cache.CallBackListener;
 import com.haizhi.authcenter.util.Utils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -55,6 +56,34 @@ public class CacheToken implements Cache<String,String> {
                 return v;
             }
         });
+    }
+
+    @Override
+    public void del(String key) {
+        this.redisTemplate.execute(new RedisCallback<String>() {
+            @Override
+            public String doInRedis(RedisConnection connection) throws DataAccessException {
+                connection.del(key.getBytes());
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public void del(String key, CallBackListener callBackListener) {
+        String resp = this.redisTemplate.execute(new RedisCallback<String>() {
+            @Override
+            public String doInRedis(RedisConnection connection) throws DataAccessException {
+                connection.del(key.getBytes());
+                return "OK";
+            }
+        });
+
+        if("OK".equals(resp)){
+            callBackListener.afterProcess();
+        }
+
+
     }
 
     public void setRedisTemplate(RedisTemplate redisTemplate) {

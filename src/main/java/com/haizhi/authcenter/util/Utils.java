@@ -6,7 +6,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 import com.haizhi.authcenter.constants.Key;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.mgt.SessionKey;
+import org.apache.shiro.subject.PrincipalCollection;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -98,5 +102,26 @@ public class Utils {
         Calendar expireDate = Calendar.getInstance();
         expireDate.set(calendarType,expireDate.get(calendarType)+value);
         return expireDate;
+    }
+
+    public static boolean hasRole(String role) {
+        return SecurityUtils.getSubject().hasRole(role);
+    }
+
+    public static String getUserName() {
+        return SecurityUtils.getSubject().getPrincipal().toString();
+    }
+
+    public static String getUserID() {
+        return SecurityUtils.getSubject().getSession().getAttribute("userID").toString();
+    }
+
+    public static void test() {
+        SecurityUtils.getSecurityManager().getSession(new SessionKey(){
+            @Override
+            public Serializable getSessionId() {
+                return "";
+            }
+        }).stop();
     }
 }

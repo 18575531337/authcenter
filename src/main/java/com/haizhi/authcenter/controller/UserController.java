@@ -7,7 +7,9 @@ import com.haizhi.authcenter.entity.response.RespData;
 
 import com.haizhi.authcenter.service.UserService;
 import com.haizhi.authcenter.util.Utils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +65,20 @@ public class UserController {
         resp.put("token", token);
 
         cacheToken.set("user_session_"+id,token);
+        Session session = SecurityUtils.getSubject().getSession();
+        session.setAttribute("userID",id);
+        session.setTimeout(Utils.getExpireDate(12, Calendar.HOUR).getTimeInMillis());
+
         return RespData.SUCCESS().setData(resp);
+    }
+
+    @RequestMapping(value = "/logout" , method = RequestMethod.GET
+            /*,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE*/)
+    public RespData logout(){
+        this.userService.logout();
+        return RespData.SUCCESS().setData("logout");
     }
 
     //@RequiresPermissions("CCC")
@@ -74,6 +90,8 @@ public class UserController {
 
     @RequestMapping("/test")
     public RespData test(){
+        boolean hasRole = Utils.hasRole(RoleType.ADMIN);
+        String userName = Utils.getUserName();
         return RespData.SUCCESS().setData(this.userService.test());
     }
 

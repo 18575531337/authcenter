@@ -1,15 +1,18 @@
 package com.haizhi.authcenter.service.impl;
 
+import com.haizhi.authcenter.cache.impl.CacheToken;
 import com.haizhi.authcenter.entity.User;
 import com.haizhi.authcenter.dao.mapper.PermissionDao;
 import com.haizhi.authcenter.dao.mapper.UserDao;
 import com.haizhi.authcenter.service.UserService;
+import com.haizhi.authcenter.util.Utils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +29,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PermissionDao permissionDao;
 
+    @Autowired
+    private CacheToken cacheToken;
+
     @Override
     public String getName() {
         return null;
@@ -35,7 +41,7 @@ public class UserServiceImpl implements UserService {
     public void login(User user) {
         UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(
                 user.getUsername(),user.getPassword());
-        usernamePasswordToken.setRememberMe(true);
+        usernamePasswordToken.setRememberMe(true);//关闭浏览器后不必重新登陆
 
         Subject subject = SecurityUtils.getSubject();
         subject.login(usernamePasswordToken);
@@ -47,8 +53,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void logout(User user) {
+    public void logout() {
+        String id = Utils.getUserID();
+        this.cacheToken.del("user_session_"+id);
         SecurityUtils.getSubject().logout();
+    }
+
+    @Override
+    public void logout(User user) {
+
     }
 
     @Override
@@ -119,5 +132,9 @@ public class UserServiceImpl implements UserService {
 
     public void setPermissionDao(PermissionDao permissionDao) {
         this.permissionDao = permissionDao;
+    }
+
+    public void setCacheToken(CacheToken cacheToken) {
+        this.cacheToken = cacheToken;
     }
 }
