@@ -17,11 +17,9 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.types.RedisClientInfo;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Calendar;
@@ -67,8 +65,11 @@ public class UserController {
         cacheToken.set("user_session_"+id,token);
         Session session = SecurityUtils.getSubject().getSession();
         session.setAttribute("userID",id);
-        session.setTimeout(Utils.getExpireDate(12, Calendar.HOUR).getTimeInMillis());
+        /**
+         * 不设置就用全局的
 
+        session.setTimeout(Utils.getExpireDate(12, Calendar.HOUR).getTimeInMillis());
+         */
         return RespData.SUCCESS().setData(resp);
     }
 
@@ -88,6 +89,8 @@ public class UserController {
         return RespData.SUCCESS().setData("你好");
     }
 
+    @ExceptionHandler()
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @RequestMapping("/test")
     public RespData test(){
         boolean hasRole = Utils.hasRole(RoleType.ADMIN);
