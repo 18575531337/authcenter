@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 import com.haizhi.authcenter.constants.Key;
+import com.haizhi.authcenter.entity.User;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -72,7 +73,7 @@ public class Utils {
         return algorithm;
     }
 
-    public static String generateToken(Long userID) {
+    public static String generateToken(User user) {
 
         Calendar expireDate = Calendar.getInstance();
         //半天后过期
@@ -83,7 +84,8 @@ public class Utils {
          */
         String token = JWT.create()
                 .withExpiresAt(expireDate.getTime())
-                .withClaim("userID",userID)
+                .withClaim("userID",user.getId())
+                .withClaim("roles",user.getRoles().toString())
                 .sign(getTokenAlgorithm());
         return token;
     }

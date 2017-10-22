@@ -56,15 +56,16 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public RespData login(@RequestBody User user){
         this.userService.login(user);
-        Long id = this.userService.findUser(user.getUsername()).getId();
-        String token = Utils.generateToken(Long.valueOf(id));
+
+        user = this.userService.findUser(user.getUsername());
+        String token = Utils.generateToken(user);
 
         Map<String,String> resp = new HashMap<>();
         resp.put("token", token);
 
-        cacheToken.set("user_session_"+id,token);
+        cacheToken.set("user_session_"+user.getId(),token);
         Session session = SecurityUtils.getSubject().getSession();
-        session.setAttribute("userID",id);
+        session.setAttribute("userID",user.getId());
         /**
          * 不设置就用全局的
 
