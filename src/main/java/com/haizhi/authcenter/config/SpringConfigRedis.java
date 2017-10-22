@@ -1,5 +1,6 @@
 package com.haizhi.authcenter.config;
 
+import com.haizhi.authcenter.cache.listener.RedisMsgExpireListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
@@ -39,7 +42,7 @@ public class SpringConfigRedis {
         return redisConneFactory;
     }
 
-    @Bean("tokenCache")
+    @Bean
     public RedisTemplate<String, String> getRedisTemplate() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(getRedisConnFactory());
@@ -47,6 +50,17 @@ public class SpringConfigRedis {
         //redisTemplate.setExposeConnection(false);
 
         return redisTemplate;
+    }
+
+    @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainer() {
+        RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
+        redisMessageListenerContainer.setConnectionFactory(getRedisConnFactory());
+
+        redisMessageListenerContainer.addMessageListener(new RedisMsgExpireListener(),
+                new ChannelTopic("pubsub:queue"));
+
+        return redisMessageListenerContainer;
     }
 
 

@@ -1,7 +1,8 @@
 package com.haizhi.authcenter.security;
 
-import com.haizhi.authcenter.cache.impl.CacheToken;
+import com.haizhi.authcenter.cache.impl.CacheCommon;
 import com.haizhi.authcenter.util.SerializableUtils;
+import com.haizhi.authcenter.util.Utils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
 /**
  * Created by JuniFire on 2017/10/19.
@@ -17,7 +19,7 @@ import java.io.Serializable;
 public class UserSessionDao extends CachingSessionDAO {
 
     @Autowired
-    private CacheToken cacheToken;
+    private CacheCommon cacheCommon;
 
     @Override
     protected void doUpdate(Session session) {
@@ -35,16 +37,17 @@ public class UserSessionDao extends CachingSessionDAO {
     protected Serializable doCreate(Session session) {
         Serializable sessionId = generateSessionId(session);
         assignSessionId(session, sessionId);
-        this.cacheToken.set(sessionId.toString(), SerializableUtils.serialize(session));
+        this.cacheCommon.set(sessionId.toString(), SerializableUtils.serialize(session),
+                Utils.getExpireDate(12, Calendar.HOUR).getTimeInMillis());
         return session.getId();
     }
 
     @Override
     protected Session doReadSession(Serializable sessionId) {
-        return SerializableUtils.deserialize(this.cacheToken.get(sessionId.toString()));
+        return SerializableUtils.deserialize(this.cacheCommon.get(sessionId.toString()));
     }
 
-    public void setCacheToken(CacheToken cacheToken) {
-        this.cacheToken = cacheToken;
+    public void setCacheToken(CacheCommon cacheToken) {
+        this.cacheCommon = cacheToken;
     }
 }

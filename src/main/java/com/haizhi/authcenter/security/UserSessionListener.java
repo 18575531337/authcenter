@@ -1,6 +1,6 @@
 package com.haizhi.authcenter.security;
 
-import com.haizhi.authcenter.cache.impl.CacheToken;
+import com.haizhi.authcenter.cache.impl.CacheCommon;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class UserSessionListener implements SessionListener {
 
     @Autowired
-    private CacheToken cacheToken;
+    private CacheCommon cacheToken;
 
     @Override
     public void onStart(Session session) {
@@ -33,7 +33,7 @@ public class UserSessionListener implements SessionListener {
         session.stop();
     }
 
-    public void setCacheToken(CacheToken cacheToken) {
+    public void setCacheToken(CacheCommon cacheToken) {
         this.cacheToken = cacheToken;
     }
 }

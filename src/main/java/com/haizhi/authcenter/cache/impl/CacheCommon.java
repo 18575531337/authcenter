@@ -3,6 +3,7 @@ package com.haizhi.authcenter.cache.impl;
 import com.haizhi.authcenter.cache.Cache;
 import com.haizhi.authcenter.cache.CallBackListener;
 import com.haizhi.authcenter.util.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisStringCommands;
@@ -18,24 +19,24 @@ import java.util.Calendar;
 /**
  * Created by JuniFire on 2017/10/18.
  */
-@Component("cacheToken")
-public class CacheToken implements Cache<String,String> {
+@Component("cacheCommon")
+public class CacheCommon implements Cache<String,String> {
 
-    @Resource(name = "tokenCache")
+    @Autowired
     RedisTemplate<String,String> redisTemplate;
 
     @Override
-    public void set(String key, String value) {
+    public void set(String key, String value,Long expireTime) {
         this.redisTemplate.execute(new RedisCallback<String>() {
             @Override
             public String doInRedis(RedisConnection connection) throws DataAccessException {
-                Calendar expireDate = Utils.getExpireDate(12,Calendar.HOUR);
+                if(expireTime != null) {
+                    connection.set(key.getBytes(),value.getBytes(),Expiration.milliseconds(expireTime),
+                            RedisStringCommands.SetOption.UPSERT);
+                } else {
+                    connection.set(key.getBytes(),value.getBytes());
+                }
 
-                Expiration expiration = Expiration.milliseconds(
-                        expireDate.getTimeInMillis());
-
-                connection.set(key.getBytes(),value.getBytes(),expiration,
-                        RedisStringCommands.SetOption.UPSERT);
                 return null;
             }
         });
@@ -67,23 +68,6 @@ public class CacheToken implements Cache<String,String> {
                 return null;
             }
         });
-    }
-
-    @Override
-    public void del(String key, CallBackListener callBackListener) {
-        String resp = this.redisTemplate.execute(new RedisCallback<String>() {
-            @Override
-            public String doInRedis(RedisConnection connection) throws DataAccessException {
-                connection.del(key.getBytes());
-                return "OK";
-            }
-        });
-
-        if("OK".equals(resp)){
-            callBackListener.afterProcess();
-        }
-
-
     }
 
     public void setRedisTemplate(RedisTemplate redisTemplate) {

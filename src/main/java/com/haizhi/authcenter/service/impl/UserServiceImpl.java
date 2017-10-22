@@ -1,6 +1,6 @@
 package com.haizhi.authcenter.service.impl;
 
-import com.haizhi.authcenter.cache.impl.CacheToken;
+import com.haizhi.authcenter.cache.impl.CacheCommon;
 import com.haizhi.authcenter.entity.User;
 import com.haizhi.authcenter.dao.mapper.PermissionDao;
 import com.haizhi.authcenter.dao.mapper.UserDao;
@@ -12,7 +12,6 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +29,7 @@ public class UserServiceImpl implements UserService {
     private PermissionDao permissionDao;
 
     @Autowired
-    private CacheToken cacheToken;
+    private CacheCommon cacheCommon;
 
     @Override
     public String getName() {
@@ -55,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void logout() {
         String id = Utils.getUserID();
-        this.cacheToken.del("user_session_"+id);
+        this.cacheCommon.del("user_session_"+id);
         SecurityUtils.getSubject().logout();
     }
 
@@ -134,7 +133,7 @@ public class UserServiceImpl implements UserService {
         this.permissionDao = permissionDao;
     }
 
-    public void setCacheToken(CacheToken cacheToken) {
-        this.cacheToken = cacheToken;
+    public void setCacheToken(CacheCommon cacheCommon) {
+        this.cacheCommon = cacheCommon;
     }
 }

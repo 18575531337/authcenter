@@ -33,14 +33,11 @@ import java.util.Map;
 @RestController
 public class UserController {
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    //@Resource(name = "cacheCommon")
+    private ValueOperations<String,String> valueOperations;
 
-    @Resource(name = "tokenCache")
-    private ValueOperations<String,String> tokenCache;
-
-    @Resource(name = "cacheToken")
-    private Cache<String,String> cacheToken;
+    @Resource(name = "cacheCommon")
+    private Cache<String,String> cacheCommon;
 
     @Autowired
     private UserService userService;
@@ -63,7 +60,8 @@ public class UserController {
         Map<String,String> resp = new HashMap<>();
         resp.put("token", token);
 
-        cacheToken.set("user_session_"+user.getId(),token);
+        this.cacheCommon.set("user_session_"+user.getId(),token,
+                Utils.getExpireDate(12,Calendar.HOUR).getTimeInMillis());
         Session session = SecurityUtils.getSubject().getSession();
         session.setAttribute("userID",user.getId());
         /**
@@ -99,15 +97,15 @@ public class UserController {
         return RespData.SUCCESS().setData(this.userService.test());
     }
 
+    public void setCacheCommon(Cache<String, String> cacheCommon) {
+        this.cacheCommon = cacheCommon;
+    }
+
+    public void setValueOperations(ValueOperations<String, String> valueOperations) {
+        this.valueOperations = valueOperations;
+    }
+
     public void setUserService(UserService userService) {
         this.userService = userService;
-    }
-
-    public void setRedisTemplate(RedisTemplate<String, String> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
-
-    public void setTokenCache(ValueOperations<String,String> tokenCache) {
-        this.tokenCache = tokenCache;
     }
 }
