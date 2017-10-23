@@ -1,5 +1,7 @@
 package com.haizhi.authcenter.security;
 
+import com.haizhi.authcenter.cache.Cache;
+import com.haizhi.authcenter.constants.RedisKey;
 import com.haizhi.authcenter.entity.User;
 import com.haizhi.authcenter.constants.UserStatus;
 import com.haizhi.authcenter.service.UserService;
@@ -12,6 +14,7 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Set;
 
 /**
@@ -22,6 +25,9 @@ public class UserRealm extends AuthorizingRealm {
 
     @Autowired
     UserService userService;
+
+    @Resource(name = "cacheCommon")
+    Cache<String,String> cacheCommon;
 
     //授权
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -52,7 +58,7 @@ public class UserRealm extends AuthorizingRealm {
         if(user == null) {
             throw new UnknownAccountException();//没找到帐号
         }
-        if(UserStatus.LOCKED.equals(user.getUserStatus())) {
+        if(UserStatus.LOCKED.equals(this.cacheCommon.get(RedisKey.USER_RETRY+username))) {
             throw new LockedAccountException(); //帐号锁定
         }
 
@@ -65,6 +71,10 @@ public class UserRealm extends AuthorizingRealm {
         );
 
         return authenticationInfo;
+    }
+
+    public void setCacheCommon(Cache<String, String> cacheCommon) {
+        this.cacheCommon = cacheCommon;
     }
 
     public void setUserService(UserService userService) {

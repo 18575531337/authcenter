@@ -11,6 +11,8 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.support.atomic.RedisAtomicInteger;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
@@ -48,21 +50,21 @@ public class SpringConfigRedis {
         redisTemplate.setConnectionFactory(getRedisConnFactory());
         //redisTemplate.setEnableTransactionSupport(false);
         //redisTemplate.setExposeConnection(false);
-
         return redisTemplate;
     }
 
+/*
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer() {
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
         redisMessageListenerContainer.setConnectionFactory(getRedisConnFactory());
 
         redisMessageListenerContainer.addMessageListener(new RedisMsgExpireListener(),
-                new ChannelTopic("pubsub:queue"));
+                new ChannelTopic("user-status"));
 
         return redisMessageListenerContainer;
     }
-
+*/
 
     public String getHost() {
         return host;

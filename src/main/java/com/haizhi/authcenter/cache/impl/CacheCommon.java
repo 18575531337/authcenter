@@ -10,11 +10,13 @@ import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.types.Expiration;
+import org.springframework.data.redis.support.atomic.RedisAtomicInteger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.nio.charset.Charset;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by JuniFire on 2017/10/18.
@@ -26,7 +28,7 @@ public class CacheCommon implements Cache<String,String> {
     RedisTemplate<String,String> redisTemplate;
 
     @Override
-    public void set(String key, String value,Long expireTime) {
+    public void set(String key, String value, Long expireTime) {
         this.redisTemplate.execute(new RedisCallback<String>() {
             @Override
             public String doInRedis(RedisConnection connection) throws DataAccessException {
@@ -43,6 +45,14 @@ public class CacheCommon implements Cache<String,String> {
     }
 
     @Override
+    public void incAtomic(String key, Long expireTime) {
+        RedisAtomicInteger redisAtomicInteger = new RedisAtomicInteger(key,
+                this.redisTemplate.getConnectionFactory());
+        redisAtomicInteger.incrementAndGet();
+        redisAtomicInteger.expire(expireTime, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
     public String get(String key) {
 
         return this.redisTemplate.execute(new RedisCallback<String>() {
@@ -50,7 +60,11 @@ public class CacheCommon implements Cache<String,String> {
             public String doInRedis(RedisConnection connection) throws DataAccessException {
                 String v = null;
                 try {
-                    v = new String(connection.get(key.getBytes()), "UTF-8");
+                    byte[] content = connection.get(key.getBytes());
+                    if (content == null) {
+                        return null;
+                    }
+                    v = new String(content, "UTF-8");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

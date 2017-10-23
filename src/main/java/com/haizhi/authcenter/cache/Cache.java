@@ -7,6 +7,8 @@ public interface Cache<K,V> {
 
     void set(K key,V value,Long expireTime);
 
+    void incAtomic(String key, Long expireTime);
+
     V get(K key);
 
     void del(K key);
